@@ -15,8 +15,9 @@ NEWSPIDER_MODULE = "customer_reviews.spiders"
 # 	}
 # }
 
-# Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = "customer_reviews (+http://www.yourdomain.com)"
+SCRAPEOPS_BROWSER_HEADERS_ENDPOINT = "https://headers.scrapeops.io/v1/browser-headers"
+SCRAPEOPS_BROWSER_HEADERS_ACTIVE = True
+SCRAPEOPS_BROWSER_HEADERS_NUM_RESULTS = 129
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -52,9 +53,10 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
+DOWNLOADER_MIDDLEWARES = {
 #    "customer_reviews.middlewares.CustomerReviewsDownloaderMiddleware": 543,
-#}
+   "customer_reviews.middlewares.ScrapeOpsBrowserHeaderAgentMiddleware": 400
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html

@@ -101,3 +101,65 @@ class CustomerReviewsDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
+
+from urllib.parse import urlencode
+from dotenv import load_dotenv
+from random import randint
+import requests
+import os
+
+class ScrapeOpsBrowserHeaderAgentMiddleware:
+    load_dotenv()
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler.settings)
+    
+    def __init__(self, settings):
+        self.scrapeops_api_key = os.getenv("SCRAPEOPS_API_KEY", None)
+        self.scrapeops_endpoint = settings.get("SCRAPEOPS_BROWSER_HEADERS_ENDPOINT", "https://headers.scrapeops.io/v1/browser-headers")
+        self.scrapeops_browser_headers_active = settings.get("SCRAPEOPS_BROWSER_HEADERS_ACTIVE", False)
+        self.scrapeops_num_results = settings.get("SCRAPEOPS_BROWSER_HEADERS_NUM_RESULTS", 10)
+        
+        self.browser_headers_list = []
+        self._get_browser_headers()
+        self._scrapeops_browser_headers_enabled()
+    
+    def _scrapeops_browser_headers_enabled(self):
+        if self.scrapeops_api_key is None or self.scrapeops_api_key == "" or self.scrapeops_api_key == False:
+            self.scrapeops_browser_headers_active = False
+        else:
+            self.scrapeops_browser_headers_active = True
+    
+    def _get_browser_headers(self):
+        
+        self._scrapeops_browser_headers_enabled()
+
+        if self.scrapeops_browser_headers_active:
+            payload = {"api_key" : self.scrapeops_api_key, "num_results" : self.scrapeops_num_results}
+
+            response = requests.get(self.scrapeops_endpoint, params=urlencode(payload))
+            json_response = response.json()
+
+            self.browser_headers_list = json_response.get("result", [])
+
+    def _get_random_browser_header(self):
+        if len(self.browser_headers_list) > 0:    
+            random_index = randint(0, len(self.browser_headers_list) - 1)
+            return self.browser_headers_list[random_index]
+        
+    def process_request(self, request, spider):
+        random_browser_header = self._get_random_browser_header()
+        
+        if random_browser_header:
+            request.headers["upgrade-insecure-requests"] = random_browser_header["upgrade-insecure-requests"]
+            request.headers["user-agent"] = random_browser_header["user-agent"]
+            request.headers["accept"] = random_browser_header["accept"]
+            request.headers["sec-ch-ua"] = random_browser_header["sec-ch-ua"]
+            request.headers["sec-ch-ua-mobile"] = random_browser_header["sec-ch-ua-mobile"]
+            request.headers["sec-ch-ua-platform"] = random_browser_header["sec-ch-ua-platform"]
+            request.headers["sec-fetch-site"] = random_browser_header["sec-fetch-site"]
+            request.headers["sec-fetch-mod"] = random_browser_header["sec-fetch-mod"]
+            request.headers["sec-fetch-user"] = random_browser_header["sec-fetch-user"]
+            request.headers["accept-encoding"] = random_browser_header["accept-encoding"]
+            request.headers["accept-language"] = random_browser_header["accept-language"]
