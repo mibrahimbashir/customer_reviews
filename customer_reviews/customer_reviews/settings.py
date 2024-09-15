@@ -1,12 +1,3 @@
-# Scrapy settings for customer_reviews project
-#
-# For simplicity, this file contains only settings considered important or
-# commonly used. You can find more settings consulting the documentation:
-#
-#     https://docs.scrapy.org/en/latest/topics/settings.html
-#     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-
 BOT_NAME = "customer_reviews"
 
 SPIDER_MODULES = ["customer_reviews.spiders"]
@@ -17,7 +8,7 @@ NEWSPIDER_MODULE = "customer_reviews.spiders"
 #USER_AGENT = "customer_reviews (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
