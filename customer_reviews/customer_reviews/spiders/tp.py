@@ -1,5 +1,5 @@
 import scrapy
-
+from customer_reviews.items import ReviewItem
 
 class TpSpider(scrapy.Spider):
     name = "tp"
@@ -36,21 +36,23 @@ class TpSpider(scrapy.Spider):
             yield response.follow(next_page_url, callback=self.parse_category_page)
     
     def parse_business_page(self, response):
+        review_item = ReviewItem()
+
         business_unit = response.css("#business-unit-title")
 
-        business_name = business_unit.css("h1 span::text").get()
-        business_category = business_unit.xpath(".//a[last()]/text()").get(default='')
+        review_item["business_name"] = business_unit.css("h1 span::text").get()
+        review_item["business_category"] = business_unit.xpath(".//a[last()]/text()").get(default='')
 
-        customer_reviews = response.css("article")
+        customer_reviews = response.css("article section")
 
         for review in customer_reviews:
-            yield {
-                "rating" : review.css('div.styles_reviewHeader__iU9Px::attr(data-service-review-rating)').get(default='0'),
-                "review_date" : review.xpath('.//time[1]/@datetime').get(default=''),
-                "title" : review.css('h2::text').get(default=''),
-                "description" : review.css('.typography_body-l__KUYFJ.typography_appearance-default__AAY17.typography_color-black__5LYEn::text').get(default=''),
-                "date_experience" : review.css('p.typography_body-m__xgxZ_.typography_appearance-default__AAY17::text').getall()[-1]
-            }
+            review_item["rating"] = review.css('div.styles_reviewHeader__iU9Px::attr(data-service-review-rating)').get(default='0')
+            review_item["review_date"] = review.xpath('.//time[1]/@datetime').get(default='')
+            review_item["title"] = review.css('h2::text').get(default='')
+            review_item["description"] = review.css('.typography_body-l__KUYFJ.typography_appearance-default__AAY17.typography_color-black__5LYEn::text').get(default='')
+            review_item["date_experience"] = review.css('p.typography_body-m__xgxZ_.typography_appearance-default__AAY17::text').getall()[-1]
+            
+            yield review_item
 
         next_page_url = response.xpath('//nav[last()]/a[last()]/@href').get(default='')
 

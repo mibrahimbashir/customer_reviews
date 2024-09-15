@@ -3,6 +3,17 @@ BOT_NAME = "customer_reviews"
 SPIDER_MODULES = ["customer_reviews.spiders"]
 NEWSPIDER_MODULE = "customer_reviews.spiders"
 
+# FEEDS = {
+# 	"reviews.csv" : {
+# 		"format" : "csv",
+# 		"overwrite" : True
+# 	},
+
+# 	"reviews.json" : {
+# 		"format" : "json",
+# 		"overwrite" : True
+# 	}
+# }
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "customer_reviews (+http://www.yourdomain.com)"
@@ -53,9 +64,9 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "customer_reviews.pipelines.CustomerReviewsPipeline": 300,
-#}
+ITEM_PIPELINES = {
+   "customer_reviews.pipelines.CustomerReviewsPipeline": 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
