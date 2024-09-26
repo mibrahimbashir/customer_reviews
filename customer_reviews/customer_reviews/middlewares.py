@@ -152,14 +152,5 @@ class ScrapeOpsBrowserHeaderAgentMiddleware:
         random_browser_header = self._get_random_browser_header()
         
         if random_browser_header:
-            request.headers["upgrade-insecure-requests"] = random_browser_header["upgrade-insecure-requests"]
-            request.headers["user-agent"] = random_browser_header["user-agent"]
-            request.headers["accept"] = random_browser_header["accept"]
-            request.headers["sec-ch-ua"] = random_browser_header["sec-ch-ua"]
-            request.headers["sec-ch-ua-mobile"] = random_browser_header["sec-ch-ua-mobile"]
-            request.headers["sec-ch-ua-platform"] = random_browser_header["sec-ch-ua-platform"]
-            request.headers["sec-fetch-site"] = random_browser_header["sec-fetch-site"]
-            request.headers["sec-fetch-mod"] = random_browser_header["sec-fetch-mod"]
-            request.headers["sec-fetch-user"] = random_browser_header["sec-fetch-user"]
-            request.headers["accept-encoding"] = random_browser_header["accept-encoding"]
-            request.headers["accept-language"] = random_browser_header["accept-language"]
+            for key, value in random_browser_header.items():
+                request.headers[key] = value
